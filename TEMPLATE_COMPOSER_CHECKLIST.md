@@ -20,19 +20,20 @@ Apply these settings in the Railway template composer when generating the templa
 
 ### evolution-api Variables
 
-| Variable | Description | Default / Reference |
-|----------|-------------|---------------------|
-| `PORT` / `SERVER_PORT` | The port Evolution API listens on. | `8080` |
-| `RAILWAY_HEALTHCHECK_PATH` | Endpoint Railway uses to verify the service is healthy. | `/` |
-| `DATABASE_PROVIDER` | Database driver Evolution API uses. | `postgresql` |
-| `DATABASE_CONNECTION_URI` | Postgres connection string. Auto-set from the Postgres service. | `${{Postgres.DATABASE_URL}}` |
-| `CACHE_REDIS_ENABLED` | Enables Redis caching for connection state. | `true` |
-| `CACHE_REDIS_URI` | Redis connection string. Auto-set from the Redis service. | `${{Redis.REDIS_URL}}` |
-| `SERVER_URL` | Public URL for webhook callbacks and QR metadata. | `https://${{RAILWAY_PUBLIC_DOMAIN}}` |
-| `AUTHENTICATION_API_KEY` | Global API key required in the `apikey` header on every request. Auto-generated. | `${{secret(64, "abcdef0123456789")}}` — **note: the Value field will currently show the literal key I generated via `openssl` for this test deploy, not this syntax. You need to manually replace it with `${{secret(64, "abcdef0123456789")}}` in the composer — otherwise every future deployer of the template gets the exact same hardcoded key, which defeats the point of a per-deploy secret.** |
-| `LANGUAGE` | Default language for instance-facing messages. | `en` |
+**Real, CLI-verified list (`railway variables --service evolution-api-railway`, re-checked 2026-07-22) — these 8 are the actual variables that will show up in the composer's "evolution-api" service card, nothing more, nothing less:**
 
-**Confidence note on this whole table:** unlike the Postgres table above, I have not seen a screenshot of the `evolution-api` service's own Variables panel — these rows reflect what I set via CLI (`railway variable set`), which I know is correct for *this* running instance, but I haven't independently confirmed how the composer displays/flags each one. If anything here doesn't match what you see when you open that panel, tell me and I'll fix it the same way, rather than assuming this table is complete just because I authored it.
+| Variable | Value (currently set — this exact string, verified via CLI) | Mark Optional? | Description |
+|----------|----------------------------------------------------------------|-----------------|-------------|
+| `DATABASE_PROVIDER` | `postgresql` | No | Database driver Evolution API uses. |
+| `DATABASE_CONNECTION_URI` | `${{Postgres.DATABASE_URL}}` | No | Postgres connection string. Auto-set from the Postgres service. |
+| `CACHE_REDIS_ENABLED` | `true` | No | Enables Redis caching for connection state. |
+| `CACHE_REDIS_URI` | `${{Redis.REDIS_URL}}` | No | Redis connection string. Auto-set from the Redis service. |
+| `SERVER_URL` | `https://${{RAILWAY_PUBLIC_DOMAIN}}` | No | Public URL for webhook callbacks and QR metadata. |
+| `AUTHENTICATION_API_KEY` | **Currently a literal test key (`8cc21b80...`), NOT the secret() syntax below — you must manually replace it with `${{secret(64, "abcdef0123456789")}}` in the composer, or every future deployer gets this exact same hardcoded key** | No | Global API key required in the `apikey` header on every request. Auto-generated. |
+| `LANGUAGE` | `en` | **Yes** — this is a cosmetic default, not required for the app to function | Default language for instance-facing messages. |
+| `RAILWAY_HEALTHCHECK_PATH` | `/` | No | Endpoint Railway uses to verify the service is healthy. |
+
+**Correction on the previous version of this table:** it listed `PORT` / `SERVER_PORT` as if it were a composer variable — **it is not.** `SERVER_PORT=8080` is baked into the Dockerfile as a build-time `ENV` instruction, so it's invisible to `railway variable set`/the composer's Variables panel entirely; you will not see it or need to set it there. It also previously listed `RAILWAY_HEALTHCHECK_PATH` as already set — it genuinely wasn't (confirmed via CLI it was missing), so I just added it via `railway variable set RAILWAY_HEALTHCHECK_PATH=/` before writing this table, and re-verified all 8 rows above directly against a fresh `railway variables` dump rather than reusing what I remembered setting earlier in the session.
 
 ### Postgres Variables (this template uses Railway's managed Postgres plugin — `railwayapp-templates/postgres-ssl`, added via `railway add --database postgres`, NOT a custom Docker service. All 13 of these appear in the composer's "Postgres" service card and each needs a description. "Value" = what's already in the Variable Value field, or what to type in if it's showing empty. "Mark Optional?" = whether to check the "Mark as optional" checkbox, per SKILL.md's rule: any variable you're giving an explicit default to should be optional so Railway can still let a deployer override it.)
 
