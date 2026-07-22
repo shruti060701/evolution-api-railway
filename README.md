@@ -12,13 +12,14 @@ Evolution API — open-source WhatsApp REST API built on Baileys. Connect a pers
 - **Integrations** — built-in support for n8n, Typebot, Chatwoot, and OpenAI/Dify for bot workflows.
 - **Persistent sessions** — WhatsApp auth state survives redeploys via a Railway Volume.
 - **Pinned, stable image** — runs `evoapicloud/evolution-api:v2.3.7`, not a floating `latest` tag, so behavior doesn't change under you between deploys.
+- **Built-in web manager** — a browser UI ships inside the same image at `/manager`, so you can create instances and scan QR codes without calling the API by hand.
 
 ## How to use
 
 1. Click the **Deploy on Railway** button above.
 2. Wait for the API, Postgres, and Redis services to come online (healthcheck passes automatically).
 3. Open your Railway domain — you should see a JSON welcome response confirming the API is live.
-4. Create a WhatsApp instance via `POST /instance/create` (send your `AUTHENTICATION_API_KEY` in the `apikey` header) and scan the returned QR code from WhatsApp's Linked Devices menu.
+4. Open `<your-domain>/manager` in a browser, create a WhatsApp instance, and scan the QR code from WhatsApp's Linked Devices menu. (Or do this over the API directly: `POST /instance/create` with your `AUTHENTICATION_API_KEY` in the `apikey` header.)
 5. Send your first message via `POST /message/sendText/{instance}`. Full endpoint reference is in the [Evolution API docs](https://doc.evolution-api.com/).
 
 ## Environment Variables

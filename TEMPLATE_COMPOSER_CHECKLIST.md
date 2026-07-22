@@ -87,6 +87,7 @@ If using Railway's managed Postgres plugin, set defaults so users don't get "nee
 
 ## 6. Known Troubleshooting
 
+- **Built-in manager UI confirmed live at `/manager`** (verified 2026-07-22 via real deploy: root `/` welcome JSON includes a `"manager"` field pointing at it, and `curl` confirms a real "Evolution Manager" SPA is served, not a placeholder). This ships inside `evoapicloud/evolution-api` itself — no separate `evolution-manager` service needed. Worth calling out in the template's marketing copy as a real differentiator against competing templates that are API-only.
 - **First-run without an instance:** hitting `/` returns a JSON welcome payload — this is expected and confirms the service is alive, not an error.
 - **QR code expired:** QR codes expire quickly (Baileys default). If a scan attempt fails, re-fetch the QR via the instance's connect endpoint rather than reusing an old one.
 - **Volume permission errors:** only apply a `USER root` / `gosu`-drop-privileges fix if an actual `EACCES` error is observed in `railway logs` after a real deploy — do not preemptively add one from static Dockerfile inspection (see project memory: this exact mistake was made and reverted on Uptime Kuma).
