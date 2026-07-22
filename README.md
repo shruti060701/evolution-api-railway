@@ -19,8 +19,10 @@ Evolution API — open-source WhatsApp REST API built on Baileys. Connect a pers
 1. Click the **Deploy on Railway** button above.
 2. Wait for the API, Postgres, and Redis services to come online (healthcheck passes automatically).
 3. Open your Railway domain — you should see a JSON welcome response confirming the API is live.
-4. Open `<your-domain>/manager` in a browser, create a WhatsApp instance, and scan the QR code from WhatsApp's Linked Devices menu. (Or do this over the API directly: `POST /instance/create` with your `AUTHENTICATION_API_KEY` in the `apikey` header.)
-5. Send your first message via `POST /message/sendText/{instance}`. Full endpoint reference is in the [Evolution API docs](https://doc.evolution-api.com/).
+4. Open `<your-domain>/manager` in a browser. On the login screen, the Server URL is pre-filled — paste your `AUTHENTICATION_API_KEY` (from the service's Variables tab in Railway) into **API Key Global** and log in.
+5. Click **Instance +**, give it a **Name**, and paste the same `AUTHENTICATION_API_KEY` into the **Token** field (the manager UI requires a token per instance — reusing your global key is fine for a single-user setup). Leave Channel on the default **Baileys** and click **Save**.
+6. Open the new instance, click **Get QR Code**, and scan it from WhatsApp's Linked Devices menu. Status flips from "Connecting" to connected once scanned.
+7. Send your first message via `POST /message/sendText/{instance}` with your `AUTHENTICATION_API_KEY` in the `apikey` header. Full endpoint reference is in the [Evolution API docs](https://doc.evolution-api.com/).
 
 ## Environment Variables
 
