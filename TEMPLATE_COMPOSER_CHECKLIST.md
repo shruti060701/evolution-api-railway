@@ -29,8 +29,10 @@ Apply these settings in the Railway template composer when generating the templa
 | `CACHE_REDIS_ENABLED` | Enables Redis caching for connection state. | `true` |
 | `CACHE_REDIS_URI` | Redis connection string. Auto-set from the Redis service. | `${{Redis.REDIS_URL}}` |
 | `SERVER_URL` | Public URL for webhook callbacks and QR metadata. | `https://${{RAILWAY_PUBLIC_DOMAIN}}` |
-| `AUTHENTICATION_API_KEY` | Global API key required in the `apikey` header on every request. Auto-generated. | `${{secret(64, "abcdef0123456789")}}` |
+| `AUTHENTICATION_API_KEY` | Global API key required in the `apikey` header on every request. Auto-generated. | `${{secret(64, "abcdef0123456789")}}` — **note: the Value field will currently show the literal key I generated via `openssl` for this test deploy, not this syntax. You need to manually replace it with `${{secret(64, "abcdef0123456789")}}` in the composer — otherwise every future deployer of the template gets the exact same hardcoded key, which defeats the point of a per-deploy secret.** |
 | `LANGUAGE` | Default language for instance-facing messages. | `en` |
+
+**Confidence note on this whole table:** unlike the Postgres table above, I have not seen a screenshot of the `evolution-api` service's own Variables panel — these rows reflect what I set via CLI (`railway variable set`), which I know is correct for *this* running instance, but I haven't independently confirmed how the composer displays/flags each one. If anything here doesn't match what you see when you open that panel, tell me and I'll fix it the same way, rather than assuming this table is complete just because I authored it.
 
 ### Postgres Variables (this template uses Railway's managed Postgres plugin — `railwayapp-templates/postgres-ssl`, added via `railway add --database postgres`, NOT a custom Docker service. All 13 of these appear in the composer's "Postgres" service card and each needs a description. "Value" = what's already in the Variable Value field, or what to type in if it's showing empty. "Mark Optional?" = whether to check the "Mark as optional" checkbox, per SKILL.md's rule: any variable you're giving an explicit default to should be optional so Railway can still let a deployer override it.)
 
@@ -42,7 +44,7 @@ Apply these settings in the Railway template composer when generating the templa
 | `PGHOST` | Already prefilled: `${{RAILWAY_PRIVATE_DOMAIN}}` — leave as is | No | Internal hostname for the Postgres database service. |
 | `PGPORT` | Shows "Empty value to be filled by the user" — set to `5432` | **Yes** | Port the Postgres database listens on. |
 | `PGUSER` | Already prefilled: `${{POSTGRES_USER}}` — leave as is | No | Username for connecting to the Postgres database. |
-| `PGPASSWORD` | Already prefilled: `${{POSTGRES_PASSWORD}}` — leave as is | No | Password for connecting to the Postgres database. Auto-generated. |
+| `PGPASSWORD` | **Not screenshot-confirmed** — inferred by pattern from `PGUSER`→`${{POSTGRES_USER}}` and `PGDATABASE`→`${{POSTGRES_DB}}`, so likely `${{POSTGRES_PASSWORD}}`, but verify what's actually shown before trusting this (this is the same category of field — a secret — where I got `POSTGRES_PASSWORD` wrong earlier) | No | Password for connecting to the Postgres database. Auto-generated. |
 | `PGDATABASE` | Already prefilled: `${{POSTGRES_DB}}` — leave as is | No | Default database name created in Postgres. |
 | `POSTGRES_USER` | `postgres` | **Yes** | Username for the Postgres superuser account. |
 | `POSTGRES_PASSWORD` | Already prefilled by Railway: `${{secret(32, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")}}` — leave as is (confirmed live in the composer 2026-07-22; my earlier `${{secret(16)}}` guess in this doc was wrong and has been corrected) | No | Password for the Postgres superuser. Auto-generated. |
@@ -58,12 +60,12 @@ The six marked **Yes** above (`PGDATA`, `PGPORT`, `POSTGRES_DB`, `POSTGRES_USER`
 |----------|-------------------------------------------------------|-----------------|-------------|
 | `REDIS_URL` | Already auto-set by Railway (private connection string) — leave as is | No | Redis connection string over Railway's private network. Auto-set. Used by `CACHE_REDIS_URI` on the app service. |
 | `REDIS_PUBLIC_URL` | Already auto-set by Railway (public connection string) — leave as is | No | Public Redis connection string for external access outside Railway. Auto-set. |
-| `REDISHOST` | Already prefilled: `${{RAILWAY_PRIVATE_DOMAIN}}` — leave as is | No | Internal hostname for the Redis service. |
+| `REDISHOST` | **Not screenshot-confirmed** — inferred by pattern from `PGHOST`, so likely `${{RAILWAY_PRIVATE_DOMAIN}}`, but I never saw the Redis service's Variables panel — verify before trusting | No (unless shown empty) | Internal hostname for the Redis service. |
 | `REDISPORT` | Unconfirmed — check what's actually showing in the composer before touching it. If empty, `6379` is the real value (confirmed via `railway variables --service Redis`). | Only if actually empty | Port the Redis service listens on. |
 | `REDISUSER` | Unconfirmed — check what's actually showing in the composer before touching it. If empty, `default` is the real value (confirmed via `railway variables --service Redis`). | Only if actually empty | Username for connecting to Redis. |
-| `REDISPASSWORD` / `REDIS_PASSWORD` | Already auto-generated by Railway — leave as is | No | Password for connecting to Redis. Auto-generated. |
+| `REDISPASSWORD` / `REDIS_PASSWORD` | **Not screenshot-confirmed** — presumably auto-generated like `POSTGRES_PASSWORD` was, but I haven't seen the actual value/syntax shown in the composer for this one either — verify before trusting | No (unless shown empty) | Password for connecting to Redis. Auto-generated. |
 
-None of the Redis variables appeared in my earlier `railway variables --service Redis` dump as empty, so unlike Postgres's `PGPORT`, I don't have confirmed evidence any Redis variable needs "Mark as optional" — check live in the composer and only mark ones actually showing "Empty value to be filled by the user."
+**Important caveat on this whole Redis table: I have never actually seen a screenshot of the Redis service's Variables panel in the composer** (only Postgres's, and only the app service's variable count, not its panel). Every "leave as is" / prefilled-value claim here beyond `REDISPORT`/`REDISUSER` (which came from real `railway variables --service Redis` CLI output) is inference by pattern-matching against the Postgres panel, not direct confirmation — treat this whole table as lower-confidence than the Postgres one until you open that panel and I can see what's actually there.
 
 ---
 
