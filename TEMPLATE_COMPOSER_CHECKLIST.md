@@ -32,34 +32,34 @@ Apply these settings in the Railway template composer when generating the templa
 | `AUTHENTICATION_API_KEY` | Global API key required in the `apikey` header on every request. Auto-generated. | `${{secret(64, "abcdef0123456789")}}` |
 | `LANGUAGE` | Default language for instance-facing messages. | `en` |
 
-### Postgres Variables (this template uses Railway's managed Postgres plugin — `railwayapp-templates/postgres-ssl`, added via `railway add --database postgres`, NOT a custom Docker service. All 13 of these appear in the composer's "Postgres" service card and each needs a description.)
+### Postgres Variables (this template uses Railway's managed Postgres plugin — `railwayapp-templates/postgres-ssl`, added via `railway add --database postgres`, NOT a custom Docker service. All 13 of these appear in the composer's "Postgres" service card and each needs a description. "Value" = what's already in the Variable Value field, or what to type in if it's showing empty.)
 
-| Variable | Description |
-|----------|-------------|
-| `DATABASE_URL` | The primary database connection string, over Railway's private network. Auto-set. |
-| `DATABASE_PUBLIC_URL` | Public database connection string for external access outside Railway. Auto-set. |
-| `PGDATA` | Directory where Postgres stores its data files inside the container. |
-| `PGHOST` | Internal hostname for the Postgres database service. |
-| `PGPORT` | Port the Postgres database listens on. |
-| `PGUSER` | Username for connecting to the Postgres database. |
-| `PGPASSWORD` | Password for connecting to the Postgres database. Auto-generated. |
-| `PGDATABASE` | Default database name created in Postgres. |
-| `POSTGRES_USER` | Username for the Postgres superuser account. |
-| `POSTGRES_PASSWORD` | Password for the Postgres superuser. Auto-generated. |
-| `POSTGRES_DB` | Default database name created on startup (same value as `PGDATABASE`). |
-| `SSL_CERT_DAYS` | Number of days the auto-generated SSL certificate stays valid. |
-| `RAILWAY_DEPLOYMENT_DRAINING_SECONDS` | Seconds Railway waits for active connections to finish before a redeploy. |
+| Variable | Value (already prefilled by Railway, or what to set) | Description |
+|----------|-------------------------------------------------------|-------------|
+| `DATABASE_URL` | Already auto-set by Railway (private connection string) — leave as is | The primary database connection string, over Railway's private network. Auto-set. |
+| `DATABASE_PUBLIC_URL` | Already auto-set by Railway (public connection string) — leave as is | Public database connection string for external access outside Railway. Auto-set. |
+| `PGDATA` | `/var/lib/postgresql/data/pgdata` | Directory where Postgres stores its data files inside the container. |
+| `PGHOST` | Already prefilled: `${{RAILWAY_PRIVATE_DOMAIN}}` — leave as is | Internal hostname for the Postgres database service. |
+| `PGPORT` | Shows "Empty value to be filled by the user" — **set to `5432`, mark Optional** | Port the Postgres database listens on. |
+| `PGUSER` | Already prefilled: `${{POSTGRES_USER}}` — leave as is | Username for connecting to the Postgres database. |
+| `PGPASSWORD` | Already prefilled: `${{POSTGRES_PASSWORD}}` — leave as is | Password for connecting to the Postgres database. Auto-generated. |
+| `PGDATABASE` | Already prefilled: `${{POSTGRES_DB}}` — leave as is | Default database name created in Postgres. |
+| `POSTGRES_USER` | `postgres` | Username for the Postgres superuser account. |
+| `POSTGRES_PASSWORD` | `${{secret(16)}}` (if showing empty) — otherwise already auto-generated | Password for the Postgres superuser. Auto-generated. |
+| `POSTGRES_DB` | `railway` | Default database name created on startup (same value as `PGDATABASE`). |
+| `SSL_CERT_DAYS` | `820` | Number of days the auto-generated SSL certificate stays valid. |
+| `RAILWAY_DEPLOYMENT_DRAINING_SECONDS` | `60` | Seconds Railway waits for active connections to finish before a redeploy. |
 
 ### Redis Variables (managed Redis plugin, added via `railway add --database redis`)
 
-| Variable | Description |
-|----------|-------------|
-| `REDIS_URL` | Redis connection string over Railway's private network. Auto-set. Used by `CACHE_REDIS_URI` on the app service. |
-| `REDIS_PUBLIC_URL` | Public Redis connection string for external access outside Railway. Auto-set. |
-| `REDISHOST` | Internal hostname for the Redis service. |
-| `REDISPORT` | Port the Redis service listens on. |
-| `REDISUSER` | Username for connecting to Redis. |
-| `REDISPASSWORD` / `REDIS_PASSWORD` | Password for connecting to Redis. Auto-generated. |
+| Variable | Value (already prefilled by Railway, or what to set) | Description |
+|----------|-------------------------------------------------------|-------------|
+| `REDIS_URL` | Already auto-set by Railway (private connection string) — leave as is | Redis connection string over Railway's private network. Auto-set. Used by `CACHE_REDIS_URI` on the app service. |
+| `REDIS_PUBLIC_URL` | Already auto-set by Railway (public connection string) — leave as is | Public Redis connection string for external access outside Railway. Auto-set. |
+| `REDISHOST` | Already prefilled: `${{RAILWAY_PRIVATE_DOMAIN}}` — leave as is | Internal hostname for the Redis service. |
+| `REDISPORT` | `6379` (if showing empty) | Port the Redis service listens on. |
+| `REDISUSER` | `default` | Username for connecting to Redis. |
+| `REDISPASSWORD` / `REDIS_PASSWORD` | Already auto-generated by Railway — leave as is | Password for connecting to Redis. Auto-generated. |
 
 ---
 
