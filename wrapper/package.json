@@ -1,0 +1,9 @@
+{
+  "name": "evolution-api-manager-redirect",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tiny reverse proxy: redirects bare GET / to /manager, passes everything else (including WebSocket upgrades) through to the real Evolution API process untouched.",
+  "dependencies": {
+    "http-proxy": "^1.18.1"
+  }
+}
