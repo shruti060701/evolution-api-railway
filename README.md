@@ -12,14 +12,14 @@ Evolution API — open-source WhatsApp REST API built on Baileys. Connect a pers
 - **Integrations** — built-in support for n8n, Typebot, Chatwoot, and OpenAI/Dify for bot workflows.
 - **Persistent sessions** — WhatsApp auth state survives redeploys via a Railway Volume.
 - **Pinned, stable image** — runs `evoapicloud/evolution-api:v2.3.7`, not a floating `latest` tag, so behavior doesn't change under you between deploys.
-- **Built-in web manager** — a browser UI ships inside the same image at `/manager`, so you can create instances and scan QR codes without calling the API by hand.
+- **Built-in web manager** — a browser UI ships inside the same image at `/manager`, so you can create instances and scan QR codes without calling the API by hand. Opening your bare Railway domain redirects you straight there automatically — no need to know or type `/manager` yourself.
 
 ## How to use
 
 1. Click the **Deploy on Railway** button above.
 2. Wait for the API, Postgres, and Redis services to come online (healthcheck passes automatically).
-3. Open your Railway domain — you should see a JSON welcome response confirming the API is live.
-4. Open `<your-domain>/manager` in a browser. On the login screen, the Server URL is pre-filled — paste your `AUTHENTICATION_API_KEY` (from the service's Variables tab in Railway) into **API Key Global** and log in.
+3. Open your Railway domain — you'll be redirected straight to the manager UI's login screen. (The underlying API still returns its usual JSON responses on every other path; only a bare `GET /` redirects.)
+4. On the login screen, the Server URL is pre-filled — paste your `AUTHENTICATION_API_KEY` (from the service's Variables tab in Railway) into **API Key Global** and log in.
 5. Click **Instance +**, give it a **Name**, and paste the same `AUTHENTICATION_API_KEY` into the **Token** field (the manager UI requires a token per instance — reusing your global key is fine for a single-user setup). Leave Channel on the default **Baileys** and click **Save**.
 6. Open the new instance, click **Get QR Code**, and scan it from WhatsApp's Linked Devices menu. Status flips from "Connecting" to connected once scanned.
 7. Send your first message via `POST /message/sendText/{instance}` with your `AUTHENTICATION_API_KEY` in the `apikey` header. Full endpoint reference is in the [Evolution API docs](https://doc.evolution-api.com/).
